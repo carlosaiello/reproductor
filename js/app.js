@@ -2,7 +2,6 @@
 Global vars
 */
 var instance;
-
 var timing;
 var eventlogcount=0;
 var currentsong=1;
@@ -11,18 +10,12 @@ var repeat=false;
 var random=false;
 
 
-
-// event is triggered (for logs)
-document.onclick = function (e) { return logEvent(e); };
-document.ondblclick = function (e) { return logEvent(e); }; 
-document.onkeyup = function (e) { return logEvent(e); }; 
-
-
 /*
 Functions
 */
+
+// adds a event to the log
 function logEvent(e){
-	//console.log(e);// a lot of data :)
 	var actualtime=new Date(e.timeStamp);
 	var timetolog=actualtime.getHours()+":"+actualtime.getMinutes()+":"+actualtime.getSeconds();
 	var eventaction=e.type;
@@ -31,8 +24,7 @@ function logEvent(e){
 	console.log(e);
 }
 
-
-//adds an item to the log
+// adds an item to the log
 function addToEventLog(actionev,eventelement,eventtime){
 	document.getElementById("eventlogcount").innerHTML = ++eventlogcount;
  	var rowstr="";
@@ -47,6 +39,7 @@ function addToEventLog(actionev,eventelement,eventtime){
 	document.getElementById("eventlog").innerHTML += rowstr;
 };
 
+// a song ends
 function songEnds() {
 
 	if (random)
@@ -57,11 +50,9 @@ function songEnds() {
 		}else{
 			stopSong();
 		}
-
-
 };
 
-//plays a song
+// plays a song
 function playSongHandler(songid) {
 	currentsong=songid;
 	if (!(instance && instance.resume())){ //resume pause
@@ -69,8 +60,6 @@ function playSongHandler(songid) {
 			stopSong(); 
 		instance = createjs.Sound.play(songid); //plays selected
 	}
-
-
     instance.addEventListener("complete", songEnds);
     //change btn from play to pause
     playbtn.style.display = "none";
@@ -78,7 +67,7 @@ function playSongHandler(songid) {
     timing = setInterval(update,3);//most fluid than 1000
 };
 
-// pauses current song
+// pause the current song
 function pauseSong() {
 	instance.pause();
 	clearInterval(timing);
@@ -86,12 +75,13 @@ function pauseSong() {
 	playbtn.style.display="";
 };
 
-// stop (another song selected)
+// stop the song (another song selected)
 function stopSong() {
 	pauseSong();
 	instance.setPosition(0);
 };
 
+// moves the player to a position given by an event
 function moveToPosition(e){//gets the position from event
 	if (instance){
 		var posx = e.clientX;
@@ -105,7 +95,7 @@ function moveToPosition(e){//gets the position from event
 	}
 };
 
-// updates all items (transcurred time, progressbar, circle)
+// update all items (transcurred time, progressbar, circle)
 function update(){
 	var playedms = instance.getPosition();
 
@@ -118,16 +108,17 @@ function update(){
 
 };
 
-// registers a song
+// register a song
 function registerSong(songid) {
 	createjs.Sound.registerSound("assets/resources/songs/"+songid+".ogg",songid);
 };
 
+// mute the sound
+function muteSound(){
+	instance.setMute(!instance.getMute());
+}
 
-
-
-
-
+// filters the data "songs", "artists", "albums"
 function filter(tofilterid){
 	var path="assets/json/"+tofilterid+".json";
 	var content=loadJSON(path,
@@ -136,11 +127,8 @@ function filter(tofilterid){
          tofilterid);
 };
 
-
-
-
-
-//taken from http://stackoverflow.com/questions/9838812/how-can-i-open-a-json-file-in-javascript-without-jquery
+// loads a json
+// method taken from http://stackoverflow.com/questions/9838812/how-can-i-open-a-json-file-in-javascript-without-jquery
 function loadJSON(path, success, error, filterid)
 {
     var xhr = new XMLHttpRequest();
@@ -163,8 +151,7 @@ function loadJSON(path, success, error, filterid)
 
 //converts a json to tables of the reproductor
 function displaySounds(content, filterid){/*in json*/
-	//maybe a template here? remove the spaggetti code
-
+	//maybe a template here? remove the spaggetti code and sanitize
 	//creating the header of the table
 	var rowstr="<tr class=\"theader\">";
 	switch(filterid) {
@@ -178,11 +165,8 @@ function displaySounds(content, filterid){/*in json*/
     		rowstr+="<th>Pista</th><th>Artista</th><th>Tiempo</th><th>Album</th>";
 	}
 	rowstr+="</tr>";
-
 	for (var i=0; i<content.structure.length; i++){
-		
 		registerSong(content.structure[i].id);
-
 		//creating the content of the table
 		if (i%2==0)
 			rowstr+="<tr class=\"even\"";
@@ -194,41 +178,12 @@ function displaySounds(content, filterid){/*in json*/
 		rowstr+= (filterid=="songs") ? "<td>"+ content.structure[i].time +"</td>" : "";
 		rowstr+= (filterid!="artists") ? "<td>"+ content.structure[i].albums+"</td>" : "";
 		rowstr+="</tr>"
-		
 	}
 	totalsongs=content.structure.length;
 	document.getElementById("content").innerHTML = rowstr;
 };
 
-
-//jsonToTables("assets/json/structure.json");
-	
-//maths
-function msToSeconds(mscs){
-	return mscs/1000;
-}
-function msToMinutes(mscs){
-	return msToSeconds(mscs)/60;
-}
-function msToSecondsWithoutMinutes(mscs){
-	return msToSeconds(mscs)%60;
-}
-function percent(actualtime,totaltime){
-	return actualtime*100.0/totaltime;
-}
-
-function setRandom(){
-	random=!random;
-}
-
-function setRepeat(){
-	repeat=!repeat;
-}
-
-function muteSound(){
-	instance.setMute(!instance.getMute());
-}
-
+//hide or show a element
 function showHideElement(element){
 	if (document.getElementById(element).style.display == "none")
 		document.getElementById(element).style.display = "";
@@ -236,46 +191,69 @@ function showHideElement(element){
 		document.getElementById(element).style.display = "none";
 }
 
-
 /*
-Other vars and Listeners
+maths
 */
-var playbtn = document.getElementById("btnPlay");
-var pausebtn = document.getElementById("btnPause");
-var backbtn = document.getElementById("btnBack");
-var nextbtn = document.getElementById("btnNext");
-var lbtn = document.getElementById("btnL");
-var rbtn = document.getElementById("btnR");
-var playing = document.getElementById("playing");
-var eventbtn = document.getElementById("btnEvents");
-var volumebtn = document.getElementById("btnVolume");
+//miliseconds to seconds
+function msToSeconds(mscs){
+	return mscs/1000;
+}
+//miliseconds to minutes
+function msToMinutes(mscs){
+	return msToSeconds(mscs)/60;
+}
+//miliseconds to seconds without minutes (ie: 127 ret 7)
+function msToSecondsWithoutMinutes(mscs){
+	return msToSeconds(mscs)%60;
+}
+//percent of a part in a total
+function percent(part,total){
+	return part*100.0/total;
+}
+// negate the random bool state
+function setRandom(){
+	random=!random;
+}
+// negates repeat (have to reuse the method setrandom..)
+function setRepeat(){
+	repeat=!repeat;
+}
 
-var filtersongs = document.getElementById("filterSongs");
-var filteralbums = document.getElementById("filterAlbums");
-var filterartists = document.getElementById("filterArtists");
-
-
-// show songs as default
-filter("songs");
-
-
-playbtn.addEventListener("click", function(){playSongHandler(currentsong)} );
-pausebtn.addEventListener("click", pauseSong );
-
-backbtn.addEventListener("click", function(){ currentsong-1 > 0 ? playSongHandler(--currentsong) : currentsong=totalsongs; playSongHandler(currentsong); } );
-
-nextbtn.addEventListener("click", function(){currentsong+1 < totalsongs ? playSongHandler(++currentsong) : currentsong=1; playSongHandler(currentsong);} );
-
-playing.addEventListener("click", moveToPosition);
-
-lbtn.addEventListener("click", setRepeat );
-rbtn.addEventListener("click", setRandom );
-eventbtn.addEventListener("click",  function(){ showHideElement("eventlog")} );
-volumebtn.addEventListener("click", muteSound );
-volumebtn.addEventListener("mouseover", function(){ showHideElement("volume")} );
-volumebtn.addEventListener("mouseout", function(){ showHideElement("volume")} );
-
-//two filters must be the same, i put 3 for scalability
-filtersongs.addEventListener("click", function(){filter("songs")} );
-filteralbums.addEventListener("click", function(){filter("albums")} );
-filterartists.addEventListener("click", function(){filter("artists")} );
+// when site is loaded, loads the listeners and +
+window.onload=function(){
+	// show songs as default
+	filter("songs");
+	// event is triggered (for logs)
+	document.onclick = function (e) { return logEvent(e); };
+	document.ondblclick = function (e) { return logEvent(e); }; 
+	document.onkeyup = function (e) { return logEvent(e); }; 
+	/*
+	Other vars and Listeners
+	*/
+	var playbtn = document.getElementById("btnPlay");
+	var pausebtn = document.getElementById("btnPause");
+	var backbtn = document.getElementById("btnBack");
+	var nextbtn = document.getElementById("btnNext");
+	var lbtn = document.getElementById("btnL");
+	var rbtn = document.getElementById("btnR");
+	var playing = document.getElementById("playing");
+	var eventbtn = document.getElementById("btnEvents");
+	var volumebtn = document.getElementById("btnVolume");
+	var filtersongs = document.getElementById("filterSongs");
+	var filteralbums = document.getElementById("filterAlbums");
+	var filterartists = document.getElementById("filterArtists");
+	playbtn.addEventListener("click", function(){playSongHandler(currentsong)} );
+	pausebtn.addEventListener("click", pauseSong );
+	backbtn.addEventListener("click", function(){ currentsong-1 > 0 ? playSongHandler(--currentsong) : currentsong=totalsongs; playSongHandler(currentsong); } );
+	nextbtn.addEventListener("click", function(){currentsong+1 < totalsongs ? playSongHandler(++currentsong) : currentsong=1; playSongHandler(currentsong);} );
+	playing.addEventListener("click", moveToPosition);
+	lbtn.addEventListener("click", setRepeat );
+	rbtn.addEventListener("click", setRandom );
+	eventbtn.addEventListener("click",  function(){ showHideElement("eventlog")} );
+	volumebtn.addEventListener("click", muteSound );
+	volumebtn.addEventListener("mouseover", function(){ showHideElement("volume")} );
+	volumebtn.addEventListener("mouseout", function(){ showHideElement("volume")} );
+	filtersongs.addEventListener("click", function(){filter("songs")} );
+	filteralbums.addEventListener("click", function(){filter("albums")} );
+	filterartists.addEventListener("click", function(){filter("artists")} );
+}
