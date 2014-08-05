@@ -1,0 +1,16 @@
+{"structure":[
+	{
+	    "songs":"Wind of Change",
+	    "artists":"Scorpions",
+	    "albums":"Acoustica",
+	    "time":"1:35",
+	    "id":"1"
+	},
+	{
+		"songs":"Otro tema",
+		"artists":"Otra banda",
+		"albums":"Otro album",
+		"time":"1:18",
+		"id":"2"
+	}
+]}

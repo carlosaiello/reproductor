@@ -1,0 +1,12 @@
+"structure":[
+{
+    "songs":"assets\resources\songs\",
+    "artists":"assets\resources\artists",
+    "albums":2012
+},
+{
+    "songs":"assets\resources\songs\",
+    "artists":"assets\resources\artists",
+    "albums":2012
+}
+]}
