@@ -41,7 +41,6 @@ function addToEventLog(actionev,eventelement,eventtime){
 
 // a song ends
 function songEnds() {
-
 	if (random)
 		playSongHandler(Math.floor((Math.random() * totalsongs) + 1));
 	else
@@ -191,6 +190,7 @@ function showHideElement(element){
 		document.getElementById(element).style.display = "none";
 }
 
+
 /*
 maths
 */
@@ -219,6 +219,9 @@ function setRepeat(){
 	repeat=!repeat;
 }
 
+
+var playbtn, pausebtn, backbtn, nextbtn, lbtn, rbtn, playing, eventbtn, volumebtn, filtersongs, filteralbums, filterartists;
+
 // when site is loaded, loads the listeners and +
 window.onload=function(){
 	// show songs as default
@@ -230,18 +233,19 @@ window.onload=function(){
 	/*
 	Other vars and Listeners
 	*/
-	var playbtn = document.getElementById("btnPlay");
-	var pausebtn = document.getElementById("btnPause");
-	var backbtn = document.getElementById("btnBack");
-	var nextbtn = document.getElementById("btnNext");
-	var lbtn = document.getElementById("btnL");
-	var rbtn = document.getElementById("btnR");
-	var playing = document.getElementById("playing");
-	var eventbtn = document.getElementById("btnEvents");
-	var volumebtn = document.getElementById("btnVolume");
-	var filtersongs = document.getElementById("filterSongs");
-	var filteralbums = document.getElementById("filterAlbums");
-	var filterartists = document.getElementById("filterArtists");
+	playbtn = document.getElementById("btn-play");
+	pausebtn = document.getElementById("btn-pause");
+	backbtn = document.getElementById("btn-back");
+	nextbtn = document.getElementById("btn-next");
+	lbtn = document.getElementById("btn-l");
+	rbtn = document.getElementById("btn-r");
+	playing = document.getElementById("playing");
+	eventbtn = document.getElementById("btn-events");
+	volumebtn = document.getElementById("btn-volume");
+	filtersongs = document.getElementById("filter-songs");
+	filteralbums = document.getElementById("filter-albums");
+	filterartists = document.getElementById("filter-artists");
+
 	playbtn.addEventListener("click", function(){playSongHandler(currentsong)} );
 	pausebtn.addEventListener("click", pauseSong );
 	backbtn.addEventListener("click", function(){ currentsong-1 > 0 ? playSongHandler(--currentsong) : currentsong=totalsongs; playSongHandler(currentsong); } );
